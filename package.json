@@ -50,9 +50,9 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "git://github.com/Jam3/ios-video-test.git"
+    "url": "git://github.com/EvanBacon/Inline-Video.git"
   },
-  "homepage": "https://github.com/Jam3/ios-video-test",
+  "homepage": "https://evanbacon.github.io/Inline-Video/",
   "bugs": {
     "url": "https://github.com/Jam3/ios-video-test/issues"
   }
