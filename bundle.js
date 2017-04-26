@@ -1,3 +1,4 @@
+
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var inlineVideo2D = require('./lib/inline-canvas-video')
 var inlineVideoGPU = require('./lib/inline-shader-video')
@@ -46,7 +47,7 @@ function start (err, canvasVideo) {
   if (needsGesture) {
     var btn = document.querySelector('.button')
     var play = document.querySelector('.play')
-    
+
     // show play button
     play.style.display = 'flex'
     btn.addEventListener('click', function () {
@@ -66,7 +67,7 @@ function start (err, canvasVideo) {
       width, height
     ], canvasVideo.video)
   }
-  
+
   // resize and reposition canvas to form a letterbox view
   function letterbox (element, parent, video) {
     var aspect = video.videoWidth / video.videoHeight
@@ -76,16 +77,16 @@ function start (err, canvasVideo) {
     var width = pwidth
     var height = Math.round(width / aspect)
     var y = Math.floor(pheight - height) / 2
-    
+
     // this is a fix specifically for full-screen on iOS9
     // without it, the status bars will not hide... O.o
     if (canvasVideo.fallback) height += 1
-    
+
     element.style.top = y + 'px'
     element.style.width = width + 'px'
     element.style.height = height + 'px'
   }
-  
+
   function swapEffect () {
     effect ^= 1
     if (canvasVideo.shader) {
@@ -121,20 +122,20 @@ function createCanvasVideo (source, opt, cb) {
 
   if (fallback && !opt.muted) {
     audio = document.createElement('audio')
-    
+
     // disable autoplay for this scenario
     opt.autoplay = false
   }
 
   var loop = createLoop()
   var lastTime = now()
-  
+
   var fps = defined(opt.fps, 60)
   var elapsed = 0
   var canvas = opt.canvas || document.createElement('canvas')
   var context = null
   var render = opt.render || defaultRender
-  
+
   var canvasVideo = {}
   canvasVideo.play = play
   canvasVideo.pause = pause
@@ -142,10 +143,10 @@ function createCanvasVideo (source, opt, cb) {
   canvasVideo.video = video
   canvasVideo.audio = audio
   canvasVideo.fallback = fallback
-  
+
   var duration = Infinity
   var looping = opt.loop
-  
+
   if (fallback) {
     // load audio and muted video
     parallel([
@@ -166,10 +167,10 @@ function createCanvasVideo (source, opt, cb) {
       element: video
     }), ready)
   }
-  
+
   function ready (err) {
     if (err) return cb(err)
-    
+
     // maintain aspect ratio if only one dimension is specified
     var aspect = video.videoWidth / video.videoHeight
     if (typeof opt.width === 'number' && typeof opt.height === 'number') {
@@ -192,13 +193,13 @@ function createCanvasVideo (source, opt, cb) {
         audio.addEventListener('ended', function () {
           if (looping) {
             audio.currentTime = 0
-          } else {            
+          } else {
             loop.stop()
           }
         }, false)
       }
     }
-    
+
     duration = video.duration
     loop = createLoop(tick)
     raf(drawFrame)
@@ -223,7 +224,7 @@ function createCanvasVideo (source, opt, cb) {
     if (!fallback) {
       return drawFrame()
     }
-    
+
     // in iPhone, we render based on audio (if it exists)
     // otherwise we step forward by a target FPS
     var time = now()
@@ -238,7 +239,7 @@ function createCanvasVideo (source, opt, cb) {
       }
       lastTime = time
     }
-    
+
     // in iPhone, when audio is not present we need
     // to track duration
     if (fallback && !audio) {
@@ -253,7 +254,7 @@ function createCanvasVideo (source, opt, cb) {
   function drawFrame () {
     render(video)
   }
-  
+
   function defaultRender (video) {
     if (!context) context = canvas.getContext('2d')
     if (!context) {
@@ -307,19 +308,19 @@ function inlineShaderVideo (source, opt, cb) {
     size,
     canvasSize,
     canvas
-  
+
   inlineCanvasVideo(source, assign({}, opt, {
     render: render
   }), function (err, result) {
     if (err) return cb(err)
     canvas = result.canvas
-  
+
     gl = getContext('webgl', { canvas: canvas })
-  
+
     var video = result.video
     size = [ video.videoWidth, video.videoHeight ]
     canvasSize = [ canvas.width, canvas.height ]
-    
+
     texture = createTexture(gl, null, size)
     texture.minFilter = gl.LINEAR
     texture.magFilter = gl.LINEAR
@@ -335,7 +336,7 @@ function inlineShaderVideo (source, opt, cb) {
     shader.uniforms.duration = video.duration
     shader.uniforms.video = 0
     shader.uniforms.videoResolution = size
-    
+
     result.texture = texture
     result.shader = shader
     result.gl = gl
@@ -391,7 +392,7 @@ function simpleMediaElement (elementName, sources, opt, cb) {
   if (opt.preload) media.setAttribute('preload', opt.preload)
   if (opt.poster) media.setAttribute('poster', opt.poster)
   if (typeof opt.volume !== 'undefined') media.setAttribute('volume', opt.volume)
-  
+
   sources.forEach(function (source) {
     media.appendChild(createSource(source))
   })
@@ -412,7 +413,7 @@ function simpleMediaElement (elementName, sources, opt, cb) {
     media.load()
     checkReadyState()
   }
-  
+
   function checkReadyState () {
     if (media.readyState > media.HAVE_FUTURE_DATA) {
       cb(null, media)
@@ -837,13 +838,13 @@ exports.interleave3 = function(x, y, z) {
   y  = (y | (y<<4))  & 3272356035;
   y  = (y | (y<<2))  & 1227133513;
   x |= (y << 1);
-  
+
   z &= 0x3FF;
   z  = (z | (z<<16)) & 4278190335;
   z  = (z | (z<<8))  & 251719695;
   z  = (z | (z<<4))  & 3272356035;
   z  = (z | (z<<2))  & 1227133513;
-  
+
   return x | (z << 2);
 }
 
@@ -923,7 +924,7 @@ function Procedure() {
 function compileCwise(user_args) {
   //Create procedure
   var proc = new Procedure()
-  
+
   //Parse blocks
   proc.pre    = user_args.pre
   proc.body   = user_args.body
@@ -978,12 +979,12 @@ function compileCwise(user_args) {
       throw new Error("cwise: Unknown argument type " + proc_args[i])
     }
   }
-  
+
   //Make sure at least one array argument was specified
   if(proc.arrayArgs.length <= 0) {
     throw new Error("cwise: No array arguments specified")
   }
-  
+
   //Make sure arguments are correct
   if(proc.pre.args.length > proc_args.length) {
     throw new Error("cwise: Too many arguments in pre() block")
@@ -997,10 +998,10 @@ function compileCwise(user_args) {
 
   //Check debug flag
   proc.debug = !!user_args.printCode || !!user_args.debug
-  
+
   //Retrieve name
   proc.funcName = user_args.funcName || "cwise"
-  
+
   //Read in block size
   proc.blockSize = user_args.blockSize || 64
 
@@ -1246,7 +1247,7 @@ function generateCWiseOp(proc, typesig) {
     dtypes[i] = typesig[2*i]
     orders[i] = typesig[2*i+1]
   }
-  
+
   //Determine where block and loop indices start and end
   var blockBegin = [], blockEnd = [] // These indices are exposed as blocks
   var loopBegin = [], loopEnd = [] // These indices are iterated over
@@ -1276,7 +1277,7 @@ function generateCWiseOp(proc, typesig) {
   var arglist = ["SS"] // SS is the overall shape over which we iterate
   var code = ["'use strict'"]
   var vars = []
-  
+
   for(var j=0; j<dimension; ++j) {
     vars.push(["s", j, "=SS[", j, "]"].join("")) // The limits for each dimension.
   }
@@ -1284,11 +1285,11 @@ function generateCWiseOp(proc, typesig) {
     arglist.push("a"+i) // Actual data array
     arglist.push("t"+i) // Strides
     arglist.push("p"+i) // Offset in the array at which the data starts (also used for iterating over the data)
-    
+
     for(var j=0; j<dimension; ++j) { // Unpack the strides into vars for looping
       vars.push(["t",i,"p",j,"=t",i,"[",loopBegin[i]+j,"]"].join(""))
     }
-    
+
     for(var j=0; j<Math.abs(proc.arrayBlockIndices[i]); ++j) { // Unpack the strides into vars for block iteration
       vars.push(["t",i,"b",j,"=t",i,"[",blockBegin[i]+j,"]"].join(""))
     }
@@ -1314,7 +1315,7 @@ function generateCWiseOp(proc, typesig) {
       if(off_arg.offset[j] === 0) {
         continue
       } else if(off_arg.offset[j] === 1) {
-        init_string.push(["t", off_arg.array, "p", j].join(""))      
+        init_string.push(["t", off_arg.array, "p", j].join(""))
       } else {
         init_string.push([off_arg.offset[j], "*t", off_arg.array, "p", j].join(""))
       }
@@ -1335,7 +1336,7 @@ function generateCWiseOp(proc, typesig) {
   for(var i=0; i<proc.arrayArgs.length; ++i) {
     code.push("p"+i+"|=0")
   }
-  
+
   //Inline prelude
   if(proc.pre.body.length > 3) {
     code.push(processBlock(proc.pre, proc, dtypes))
@@ -1354,11 +1355,11 @@ function generateCWiseOp(proc, typesig) {
   if(proc.post.body.length > 3) {
     code.push(processBlock(proc.post, proc, dtypes))
   }
-  
+
   if(proc.debug) {
     console.log("-----Generated cwise routine for ", typesig, ":\n" + code.join("\n") + "\n----------")
   }
-  
+
   var loopName = [(proc.funcName||"unnamed"), "_cwise_loop_", orders[0].join("s"),"m",matched,typeSummary(dtypes)].join("")
   var f = new Function(["function ",loopName,"(", arglist.join(","),"){", code.join("\n"),"} return ", loopName].join(""))
   return f()
@@ -1397,7 +1398,7 @@ function createThunk(proc) {
   var code = ["'use strict'", "var CACHED={}"]
   var vars = []
   var thunkName = proc.funcName + "_cwise_thunk"
-  
+
   //Build thunk
   code.push(["return function ", thunkName, "(", proc.shimArgs.join(","), "){"].join(""))
   var typesig = []
@@ -1437,7 +1438,7 @@ function createThunk(proc) {
   vars.push(["type=[", string_typesig.join(","), "].join()"].join(""))
   vars.push("proc=CACHED[type]")
   code.push("var " + vars.join(","))
-  
+
   code.push(["if(!proc){",
              "CACHED[type]=proc=compile([", typesig.join(","), "])}",
              "return proc(", proc_args.join(","), ")}"].join(""))
@@ -1445,7 +1446,7 @@ function createThunk(proc) {
   if(proc.debug) {
     console.log("-----Generated thunk:\n" + code.join("\n") + "\n----------")
   }
-  
+
   //Compile thunk
   var thunk = new Function("compile", code.join("\n"))
   return thunk(compile.bind(undefined, proc))
@@ -4998,7 +4999,7 @@ exports.norm2squared = compile({
   post: {args:[], localVars:[], thisVars:["this_s"], body:"return this_s"},
   funcName: "norm2squared"
 })
-  
+
 exports.norm2 = compile({
   args:["array"],
   pre: {args:[], localVars:[], thisVars:["this_s"], body:"this_s=0"},
@@ -5006,7 +5007,7 @@ exports.norm2 = compile({
   post: {args:[], localVars:[], thisVars:["this_s"], body:"return Math.sqrt(this_s)"},
   funcName: "norm2"
 })
-  
+
 
 exports.norminf = compile({
   args:["array"],
@@ -5110,7 +5111,7 @@ exports.argmax = compile({
     args:[],
     thisVars:["this_i"],
     localVars:[]}
-})  
+})
 
 exports.random = makeOp({
   args: ["array"],
@@ -5134,9 +5135,9 @@ exports.equals = compile({
   args:["array", "array"],
   pre: EmptyProc,
   body: {args:[{name:"x", lvalue:false, rvalue:true, count:1},
-               {name:"y", lvalue:false, rvalue:true, count:1}], 
-        body: "if(x!==y){return false}", 
-        localVars: [], 
+               {name:"y", lvalue:false, rvalue:true, count:1}],
+        body: "if(x!==y){return false}",
+        localVars: [],
         thisVars: []},
   post: {args:[], localVars:[], thisVars:[], body:"return true"},
   funcName: "equals"
@@ -5711,7 +5712,7 @@ var raf = require('raf')
 
 module.exports = Engine
 function Engine(fn) {
-    if (!(this instanceof Engine)) 
+    if (!(this instanceof Engine))
         return new Engine(fn)
     this.running = false
     this.last = now()
@@ -5725,7 +5726,7 @@ function Engine(fn) {
 inherits(Engine, EventEmitter)
 
 Engine.prototype.start = function() {
-    if (this.running) 
+    if (this.running)
         return
     this.running = true
     this.last = now()
@@ -6249,11 +6250,11 @@ exports.freeUint32 =
 exports.freeInt8 =
 exports.freeInt16 =
 exports.freeInt32 =
-exports.freeFloat32 = 
+exports.freeFloat32 =
 exports.freeFloat =
-exports.freeFloat64 = 
-exports.freeDouble = 
-exports.freeUint8Clamped = 
+exports.freeFloat64 =
+exports.freeDouble =
+exports.freeUint8Clamped =
 exports.freeDataView = freeTypedArray
 
 exports.freeArrayBuffer = freeArrayBuffer
